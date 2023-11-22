@@ -7,3 +7,4 @@ express  <br />
 axios  <br />
 body-parser  <br />
 EJS
+or you can see live on https://weather-app-8fcs.onrender.com/
