@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+    
+    <% if(locals.location){ %>
+    <link rel="icon" href="https://openweathermap.org/img/wn/<%= JSON.parse(location).weather[0].icon %>.png" type="image/png">
+    <% } %>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <!-- <h1>The Weather</h1>
+    <form action="/" method="post">
+        <input type="text" name="search">
+        <button type="submit">Search</button>
+    </form> -->
+    <% const data = JSON.parse(location); %>
+    <% 
+            const unixTimestamp = data.dt * 1000; // Convert to milliseconds
+            const dateObj = new Date(unixTimestamp);
+            const dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][dateObj.getDay()];
+            const dayOfMonth = dateObj.getDate();
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const monthName = monthNames[dateObj.getMonth()];
+            const hours = dateObj.getHours();
+            const minutes = dateObj.getMinutes();
+
+            let timeOfDay ="day";
+            const code = data.weather[0].id;
+            const dOrN = data.weather[0].icon;
+            if(dOrN.charAt(dOrN.length - 1)=='n'){
+                timeOfDay="night";
+            }
+
+            let className="";
+            if(code==800)
+            {
+                if(timeOfDay=="day")
+                {
+                    className="clear-day";
+                }
+                else
+                {
+                    className="clear-night";
+                }
+            }
+            else if(code>800)
+            {
+                if(timeOfDay=="day")
+                {
+                    className="cloudy-day";
+                }
+                else
+                {
+                    className="cloudy-night";
+                }
+            }
+            else if(code>=500 && code<600)
+            {
+                if(timeOfDay=="day")
+                {
+                    className="rainy-day";
+                }
+                else
+                {
+                    className="rainy-night";
+                }
+            }
+            else if(code>=600 && code<700)
+            {
+                if(timeOfDay=="day")
+                {
+                    className="snowy-day";
+                }
+                else
+                {
+                    className="snowy-night";
+                }
+            }
+            else if(code>=300 && code<400)
+            {
+                if(timeOfDay=="day")
+                {
+                    className="drizzle-day";
+                }
+                else
+                {
+                    className="drizzle-night";
+                }
+            }
+            else if(code>=200 && code<300)
+            {
+                if(timeOfDay=="day")
+                {
+                    className="thunderstorm-day";
+                }
+                else
+                {
+                    className="thunderstorm-night";
+                }
+            }
+            else if(code>=700 && code<781)
+            {
+                if(timeOfDay=="day")
+                {
+                    className="smoke-day";
+                }
+                else
+                {
+                    className="smoke-night";
+                }
+            }
+            else if(code==781)
+            {
+                if(timeOfDay=="day")
+                {
+                    className="tornado-day";
+                }
+                else
+                {
+                    className="tornado-night";
+                }
+
+            }
+    %>
+
+
+    <div class="weather-app <%= className %>">
+        <div class="container">
+            <h3 class="brand">The Weather</h3>
+            <div>
+
+                <h1 class="temp"><%= Math.round(data.main.temp) %>&#176;C</h1>
+                <div class="city-time">
+                    <h1 class="name"><%= data.name %></h1>
+                    <small>
+                        <span class="time"><%= `${hours}:${minutes < 10 ? '0' : ''}${minutes}` %> </span>
+                        -
+                        <span class="date"><%= `${dayOfWeek} ${monthName} ${dayOfMonth}` %> </span>
+                    </small>
+                </div>
+                <div class="weather">
+                    <img src="https://openweathermap.org/img/wn/<%= JSON.parse(location).weather[0].icon %>@2x.png" alt="icon" class="icon" width="50" height="50">
+                    <span class="condition"><%= data.weather[0].main %></span>
+                </div>
+            </div>
+        </div>
+        <div class="panel">
+            <form action="/" id="locationInput" method="post">
+                <input type="text" class="search" name="search" placeholder="Search Location...">
+                <button type="submit" class="submit"><span class="material-symbols-outlined">search</span></button>
+            </form>
+
+            <!-- <ul class="cities">
+                <li class="city">Kolkata</li>
+                <li class="city">New Delhi</li>
+                <li class="city">Mumbai</li>
+            </ul> -->
+
+            <ul class="details">
+                <h4>Weather Details</h4>
+                <li><span>Cloudy</span><span class="cloud"><%= data.clouds.all %>%</span></li>
+                <li><span>Humidity</span><span class="humidity"><%= data.main.humidity %>%</span></li>
+                <li><span>Feels Like</span><span class="feels_like"><%= data.main.feels_like %>&#176;C</span></li>
+                <li><span>Wind</span><span class="wind"><%= data.wind.speed %>km/h</span></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+    const isError = urlParams.get('error');
+
+    if (isError) {
+        // Show the alert
+        alert("This City Does Not Exist");
+
+        // Redirect to the homepage after showing the alert
+        window.location.href = "/";
+    }
+    </script>
+    
+</body>
+</html>
